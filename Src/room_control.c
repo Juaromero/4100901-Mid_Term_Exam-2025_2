@@ -19,6 +19,14 @@ void room_control_app_init(void)
 {
     // Inicializar PWM al duty cycle inicial (estado IDLE -> LED apagado)
     tim3_ch1_pwm_set_duty_cycle(PWM_INITIAL_DUTY);
+
+    // Mensaje de bienvenida por UART sugerido en el parcial.
+    uart_send_string("Controlador de Sala v2.0 \n Estado inicial: \n - Lámpara: 20% \n  - Puerta: Cerrada\r\n");
+}
+
+void duty_actual(uint8_t duty)
+{
+    tim3_ch1_pwm_set_duty_cycle(duty);
 }
 
 void room_control_on_button_press(void)
@@ -80,6 +88,10 @@ void room_control_on_uart_receive(char received_char)
         case '5':
             tim3_ch1_pwm_set_duty_cycle(50);
             uart_send_string("PWM: 50%\r\n");
+            break;
+        case '?':
+        // Se implemento el comando de ayuda que muestra los comandos disponibles, para facilitar su uso, sugerido en el parcial.
+            uart_send_string("Comandos disponibles: \n '1'-'5': Ajustar brillo lámpara (10%, 20%, 30%, 40%, 50%) \n '0'   : Apagar lámpara \n 'o'   : Abrir puerta (ocupar sala) \n 'c'   : Cerrar puerta (vaciar sala) \n 's'   : Estado del sistema \n '?'   : Ayuda\r\n");
             break;
         default:
             uart_send_string("Comando desconocido: ");
